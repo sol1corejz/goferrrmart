@@ -1,6 +1,6 @@
 module github.com/sol1corejz/goferrrmart
 
-go 1.23.2
+go 1.22.8
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.5
