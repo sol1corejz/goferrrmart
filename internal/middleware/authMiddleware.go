@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/tokenstorage"
 )
