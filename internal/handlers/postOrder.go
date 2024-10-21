@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/gofiber/fiber/v2"
 	"github.com/sol1corejz/goferrrmart/internal/auth"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/storage"

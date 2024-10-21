@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/sol1corejz/goferrrmart/cmd/config"
 	"github.com/sol1corejz/goferrrmart/internal/handlers"
