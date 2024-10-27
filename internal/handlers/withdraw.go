@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sol1corejz/goferrrmart/internal/auth"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
@@ -51,6 +52,8 @@ func WithdrawHandler(c *fiber.Ctx) error {
 			})
 		}
 
+		orders, err := storage.GetUserOrders(ctx, userID)
+		fmt.Println(11111, orders)
 		_, err = storage.GetOrderByNumber(ctx, request.Order)
 
 		if err != nil {
