@@ -2,9 +2,6 @@ package handlers
 
 import (
 	"context"
-	"database/sql"
-	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sol1corejz/goferrrmart/internal/auth"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
@@ -52,20 +49,19 @@ func WithdrawHandler(c *fiber.Ctx) error {
 			})
 		}
 
-		orders, err := storage.GetUserOrders(ctx, userID)
-		fmt.Println(11111, orders)
-		_, err = storage.GetOrderByNumber(ctx, request.Order)
+		order, err := storage.GetOrderByNumber(ctx, request.Order)
 
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				logger.Log.Warn("No such order found", zap.Error(err))
-				return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-					"error": "Order does not exist",
-				})
-			}
-			logger.Log.Error("Database error while fetching order", zap.Error(err))
+		if order.ID != 0 {
+			logger.Log.Error("Order already exists", zap.Error(err))
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Internal server error",
+			})
+		}
+
+		err = storage.CreateOrder(ctx, userID.String(), request.Order)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error creating order",
 			})
 		}
 
