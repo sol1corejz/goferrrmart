@@ -30,7 +30,13 @@ func GetOrdersHandler(c *fiber.Ctx) error {
 	default:
 		token := c.Cookies("jwt")
 
-		userID := auth.GetUserID(token)
+		userID, err := auth.GetUserID(token)
+		if err != nil {
+			logger.Log.Warn("Error getting user ID", zap.Error(err))
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error getting user ID",
+			})
+		}
 
 		orders, err := storage.GetUserOrders(ctx, userID)
 

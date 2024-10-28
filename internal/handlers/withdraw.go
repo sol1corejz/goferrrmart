@@ -29,7 +29,13 @@ func WithdrawHandler(c *fiber.Ctx) error {
 	default:
 		token := c.Cookies("jwt")
 
-		userID := auth.GetUserID(token)
+		userID, err := auth.GetUserID(token)
+		if err != nil {
+			logger.Log.Warn("Error getting user ID", zap.Error(err))
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error getting user ID",
+			})
+		}
 
 		if err := c.BodyParser(&request); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -95,7 +101,13 @@ func GetWithdrawalsHandler(c *fiber.Ctx) error {
 	default:
 		token := c.Cookies("jwt")
 
-		userID := auth.GetUserID(token)
+		userID, err := auth.GetUserID(token)
+		if err != nil {
+			logger.Log.Warn("Error getting user ID", zap.Error(err))
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error getting user ID",
+			})
+		}
 
 		withdrawals, err := storage.GetUserWithdrawals(ctx, userID)
 

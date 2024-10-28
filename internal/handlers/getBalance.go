@@ -28,7 +28,13 @@ func GetUserBalanceHandler(c *fiber.Ctx) error {
 	default:
 		token := c.Cookies("jwt")
 
-		userID := auth.GetUserID(token)
+		userID, err := auth.GetUserID(token)
+		if err != nil {
+			logger.Log.Warn("Error getting user ID", zap.Error(err))
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "error getting user ID",
+			})
+		}
 
 		balance, err := storage.GetUserBalance(ctx, userID)
 
