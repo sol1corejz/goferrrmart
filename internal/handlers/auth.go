@@ -7,7 +7,6 @@ import (
 	"github.com/sol1corejz/goferrrmart/internal/auth" // Путь к вашему auth пакету
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/storage" // Путь к вашему пакету работы с базой данных
-	"github.com/sol1corejz/goferrrmart/internal/tokenstorage"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -75,8 +74,6 @@ func RegisterHandler(c *fiber.Ctx) error {
 			})
 		}
 
-		tokenstorage.AddToken(token)
-
 		auth.UserID = userID
 
 		c.Cookie(&fiber.Cookie{
@@ -141,8 +138,6 @@ func LoginHandler(c *fiber.Ctx) error {
 				"error": "Internal server error",
 			})
 		}
-
-		tokenstorage.AddToken(token)
 
 		auth.UserID = existingUser.ID
 

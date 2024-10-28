@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/sol1corejz/goferrrmart/cmd/config"
-	"github.com/sol1corejz/goferrrmart/internal/auth"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/storage"
 	"go.uber.org/zap"
@@ -62,14 +62,7 @@ func CreateOrderHandler(c *fiber.Ctx) error {
 	default:
 		orderNumber := c.Body()
 
-		token := c.Cookies("jwt")
-		userID, err := auth.GetUserID(token)
-		if err != nil {
-			logger.Log.Warn("Error getting user ID", zap.Error(err))
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Error getting user ID",
-			})
-		}
+		userID := c.Locals("userID").(uuid.UUID)
 
 		if !luhnCheck.Match(orderNumber) {
 			logger.Log.Error("Invalid order number")

@@ -2,13 +2,11 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
-	"time"
+	"github.com/sol1corejz/goferrrmart/internal/auth"
 )
 
-var jwtSecret = []byte("your-secret-key")
-
 func AuthMiddleware(c *fiber.Ctx) error {
+	// Получение токена из cookies
 	tokenString := c.Cookies("jwt")
 	if tokenString == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -16,28 +14,16 @@ func AuthMiddleware(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fiber.NewError(fiber.StatusUnauthorized, "Unexpected signing method")
-		}
-		return jwtSecret, nil
-	})
-
-	if err != nil || !token.Valid {
+	// Проверка токена и извлечение UserID
+	userID, err := auth.GetUserID(tokenString)
+	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Invalid or expired token",
 		})
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		if exp, ok := claims["exp"].(float64); ok && time.Now().Unix() > int64(exp) {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Token expired",
-			})
-		}
-
-		c.Locals("userID", claims["userID"])
-	}
+	// Сохранение userID в контексте для использования в последующих обработчиках
+	c.Locals("userID", userID)
 
 	return c.Next()
 }

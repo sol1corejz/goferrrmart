@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sol1corejz/goferrrmart/internal/auth"
+	"github.com/google/uuid"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/storage"
 	"go.uber.org/zap"
@@ -28,15 +28,7 @@ func GetOrdersHandler(c *fiber.Ctx) error {
 			"error": "Request timed out",
 		})
 	default:
-		token := c.Cookies("jwt")
-
-		userID, err := auth.GetUserID(token)
-		if err != nil {
-			logger.Log.Warn("Error getting user ID", zap.Error(err))
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Error getting user ID",
-			})
-		}
+		userID := c.Locals("userID").(uuid.UUID)
 
 		orders, err := storage.GetUserOrders(ctx, userID)
 
