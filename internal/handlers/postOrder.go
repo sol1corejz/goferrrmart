@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sol1corejz/goferrrmart/cmd/config"
 	"github.com/sol1corejz/goferrrmart/internal/auth"
 	"github.com/sol1corejz/goferrrmart/internal/logger"
 	"github.com/sol1corejz/goferrrmart/internal/storage"
@@ -121,7 +122,7 @@ func CreateOrderHandler(c *fiber.Ctx) error {
 		}
 		jsonData, _ := json.Marshal(orderToPost)
 
-		resp, err := http.Post("http://localhost:8080/api/orders", "application/json", bytes.NewBuffer(jsonData))
+		resp, err := http.Post(config.AccrualSystemAddress, "application/json", bytes.NewBuffer(jsonData))
 		defer resp.Body.Close()
 
 		if err != nil {

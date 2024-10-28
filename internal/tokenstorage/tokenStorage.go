@@ -1,11 +1,20 @@
 package tokenstorage
 
-var token = ""
+var tokens = make([]string, 0)
+
+func contains(slice []string, item string) bool {
+	for _, element := range slice {
+		if element == item {
+			return true
+		}
+	}
+	return false
+}
 
 func AddToken(tokenArg string) {
-	token = tokenArg
+	tokens = append(tokens, tokenArg)
 }
 
 func CheckToken(tokenArg string) bool {
-	return token == tokenArg
+	return contains(tokens, tokenArg)
 }
